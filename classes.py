@@ -36,55 +36,109 @@ class Player():
             
 
 
-
-
 # board class
 class Board():
     def __init__(self, grid, players=[0,1]) -> None:
         self.grid = grid
         self.places = {}
-        self.graphs = [Graph(i) for i in players]
-        self.sequences = {i:[] for i in players}
+        self.graphs = [Graph(i, grid) for i in players]
+
+        ##
+        #self.sequences = {i:[] for i in players}
+        ##
 
         # generating places
         for i in range(10):
             for j in range(10):
                 suit,val = places[i][j].split('-')
-                self.places[(i,j)] = Card(suit, val)
+                if (i,j) in [(0,0), (0,9), (9,0), (9,9)]:
+                    self.places[(i,j)] = Place(suit, val, i,j, 4,1)
+
+                
+                # filled=-1,0,1,2,3,4 fixed=1
+                self.places[(i,j)] = Place(suit, val, i,j, -1,0)
+
   
     def validPlayOnBoard(self, x,y, card_id):
-
-        # validate if card.id = places.card.id
-        if self.places[(x,y)].id == card_id:
+        wildcard = int(card_id.split("-")[2])
+        if wildcard == 1 or wildcard == 2:
+            return True
+        elif self.places[(x,y)].card.id == card_id:
             return True
         else:
             return False
-
-
-    def updateBoard(self, player, x,y):
-        self.grid[x][y] = player
+    
+    def spaceEmpty(self, player,x,y, wildcard):
         
+        if wildcard != 1:
+            print(self.places[(x,y)].filled)
+            if self.places[(x,y)].filled == -1:
+                return True
+            else:
+                return False
+        else:
+            if self.places[(x,y)].filled == player:
+                return True
+            else:
+                return False
+        '''
+        if self.places[(x,y)].filled == 0:
+                return True
+        else:
+            return False
+        '''
 
+
+    def updateBoard(self, player, x,y,card_id):
+        wildcard = int(card_id.split("-")[2])
+        if wildcard == 0: # not wild card
+            self.places[(x,y)].filled = player
+            self.grid[x][y] = player
+        
+        elif wildcard == 1: # one eyed - removes
+            if not (self.places[(x,y)].fixed == 1):
+                self.places[(x,y)].filled = -1 
+                self.grid[x][y] = -1
+            else:
+                print("Illegal")
+        
+        elif wildcard == 2: # two-eyed - adds
+            if self.places[(x,y)].filled == -1:
+                self.places[(x,y)].filled = player 
+                self.grid[x][y] = player
+            else:
+                print("Illegal")
+    
     def showBoard(self):
         print("Grid:")
         for row in self.grid:
             print(row)
         
-
-
-
+class Place():
+    def __init__(self, suit, val, x, y, filled, fixed) -> None:
+        self.card = Card(suit, val)
+        self.suit = suit
+        self.val = val
+        self.filled = filled
+        self.fixed = fixed
+        self.x = x
+        self.y = y
+    
+    def fixPlace(self):
+        self.fixed = 1
         
 
 # graph class for doing sequences
 class Graph():
-    def __init__(self, color):
+    def __init__(self, color, grid):
+        self.grid = grid
         self.gdict = {}
         self.color = color
 
         for id in range(100):
             row = id//10
             col = id%10
-            if grid[row][col] in (self.color, 4):
+            if self.grid[row][col] in (self.color, 4):
                 self.addColoredEdge(row,col)
         
         self.sequences = []
@@ -111,7 +165,7 @@ class Graph():
         neigbours = self.generateNeighbours(row,col)
         
         for r,c in neigbours:
-            if grid[r][c] in (self.color, 4):
+            if self.grid[r][c] in (self.color, 4):
                 self.addEdge((row*10 +col,r*10+c))
 
     def generateNeighbours(self,row, col):
@@ -186,7 +240,7 @@ class Deck():
                     self.cards.append(Card(s,v))
     
     def shuffle(self):
-        random.shuffle(self.cards)
+        random.Random(4).shuffle(self.cards)
         
     def drawCard(self):
         return self.cards.pop(0)
@@ -210,7 +264,7 @@ hands = D.serveHands()
 print(hands[0][6].unique)
 print(len(D.cards))
 
-'''
+
 #bo = board(grid, [1,2])
 #bo.findAllSequences_n(3)
 
@@ -224,4 +278,10 @@ players = [Player('1', 'b'), Player('2', 'r')]
 
 for id, player in enumerate(players):
     player.hand = hands[id]
+
+bo = Board(grid, [0,1])
+bo.updateSequences(0)
+
+'''
+
 

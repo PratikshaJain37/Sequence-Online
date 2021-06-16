@@ -17,7 +17,7 @@ game.board.showBoard()
 run = True
 move = ''
 
-
+x = 0
 while run:
     player = game.turn
     game.move = input("It is player %s turn:     "%(game.players[player].name))
@@ -31,9 +31,7 @@ while run:
     elif status == 0: # valid turn
         print (game.players[player].showHand())
         game.updateTurn()
-        game.board.showBoard()
-
-        
+           
 
     elif status == 1:
         pass
@@ -41,6 +39,9 @@ while run:
         pass
     elif status == 3:
         pass
+    
+    game.board.showBoard() 
+    x += 1
 
-
-    break
+    if x == 6:
+        break

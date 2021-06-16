@@ -56,6 +56,12 @@ places = [
 #g_1 = graph(2)
 #print(g_1.gdict)
 #g_1.findSequence()
+'''
+H-11-2 2-2
+S-5-0 0-4
+H-11-1 0-4
+
+'''
 #g_1.validateSequence()
 
 

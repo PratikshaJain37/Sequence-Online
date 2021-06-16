@@ -11,6 +11,8 @@ class Game():
         self.turn = 0
         self.deck = Deck()
 
+        self.sequences = {i:[] for i in range(len(players))}
+
         self.move = ''
 
     def startGame(self):
@@ -32,44 +34,56 @@ class Game():
 
    
     def play(self, player, card_id, pos):
-
-        if player == self.turn:
-            if self.players[player].validPlay(card_id):
-                if self.board.validPlayOnBoard(pos[0], pos[1], card_id):
-                    # update board
-                    self.board.updateBoard(player, pos[0], pos[1])
-                    # update hands
-                    self.players[player].removeCard(card_id)
-                    self.players[player].addCard(self.deck)
-                    
-                    # check if winner
-                    if self.isWinner(player):
-                        return -1
-
-                    else:
-                        return 0  
-                else:
-                    print("Not valid on board")
-                    return 1  
-
-            else:   
-                print('Not present in cards')
-                return 2
-        else:
-            print("Wrong Player")
+        wildcard = int(card_id.split("-")[2])
+        if player != self.turn:
+            return 4
+        elif not (self.players[player].validPlay(card_id)):
+            print('Not present in cards')
+            return 3
+        elif not(self.board.spaceEmpty(player,pos[0], pos[1], wildcard)) :
+            print("Space not empty on board, or, wildcard(1) played incorrectly")
             return 2
+        elif not(self.board.validPlayOnBoard(pos[0], pos[1],card_id)):
+            print("Wrong card or location entered, no wildcard")
+            return 1
+        else:
+            self.board.updateBoard(player, pos[0], pos[1], card_id)
+            self.players[player].removeCard(card_id)
+            self.players[player].addCard(self.deck)
+            
+            self.updateSequenceFormed(player)
+
+            # check if winner
+            if self.isGameOver():
+                print("Game Over")
+                return -1
+            else:
+                return 0 
 
 
     def updateTurn(self):
         self.turn = (self.turn+1)%2
 
-    def isWinner(self, player):
+    def updateSequenceFormed(self, player):
 
-        self.board.graphs[player+1].findSequences()
-        self.board.sequences[player] = self.board.graphs[player].sequences
+        self.board.graphs[player].findSequences()
+        self.sequences[player] = self.board.graphs[player].sequences
 
-        if self.board.sequences[player+1] != []:
-            print("Winner: Player ", player)
-            return True
+
+        # update fixed
+        for i in self.sequences[player]:
+            for id in i:
+                x = id//10
+                y = id%10
+
+                self.board.places[(x,y)].fixPlace()
+
+
+    
+    def isGameOver(self):
+        for i in range(2):
+            if len(self.sequences[i]) == 2:
+                print("winner is %s" %(i))
+                return True
         else:
-            return False
+            False
