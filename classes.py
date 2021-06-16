@@ -1,16 +1,44 @@
 # classes for pygame
+
+import pygame
 from itertools import product
 from find_sequence import grid
-from pydealer import Card, Deck, Stack
+import random
 #https://pydealer.readthedocs.io/en/latest/usage.html
 
+class Button:
+    def __init__(self, text, x, y, color):
+        self.text = text
+        self.x = x
+        self.y = y
+        self.color = color
+        self.width = 150
+        self.height = 100
+
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
+        font = pygame.font.SysFont("comicsans", 40)
+        text = font.render(self.text, 1, (255,255,255))
+        win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
+
+    def click(self, pos):
+        x1 = pos[0]
+        y1 = pos[1]
+        if self.x <= x1 <= self.x + self.width and self.y <= y1 <= self.y + self.height:
+            return True
+        else:
+            return False
+
+
+
+
 # player class
-class player():
+class Player():
     def __init__(self, name, color) -> None:
         self.name = name
         self.color = color #team
         self.turn = False # if its their turn
-        self.cards = [] #assigned cards in hand
+        self.hand = [] #assigned cards in hand
     
     def toggleEnable(self):
         if self.turn == False:
@@ -18,13 +46,17 @@ class player():
         else:
             self.turn = False
     
-    def takeCard(self, card):
-        self.cards = self.cards.append(card)
+    def drawCard(self, deck):
+        self.hand.append(deck.drawCard())
+    
+    def showHand(self):
+        for card in self.hand:
+            print(card.id, end=' ')
 
 
 
 # players list
-class players():
+class Players():
     def __init__(self) -> None:
         self.playerList = [] # list of <player> objects
         self.playerOrder = []  # the order of turns
@@ -163,11 +195,10 @@ class graph():
         pass
 
 
-bo = board(grid, [1,2])
-bo.findAllSequences_n(3)
+
 
 # place class
-class place():
+class Place():
 
     def __init__(self, row, column, rank, suit) -> None:
         self.row = row
@@ -191,4 +222,71 @@ class place():
 
 
 # card class
+class Card:
+    def __init__(self, suit, val, wild=0) -> None:
+        # id is a string which is of the form "0-S-14" {0/1, suit, value}
 
+        self.suit = suit
+        self.val = val
+        self.wild = wild
+        self.id = str(suit)+"-"+str(val)+"-"+str(wild)
+
+class Deck():
+    def __init__(self) -> None:
+        self.cards = []
+    
+
+    def initialBuild(self):
+        for s in ['S',"C","D","H"]:
+            for v in range(1,14):
+                if v == 11:
+                    self.cards.append(Card(s,v,wild=1))
+                    self.cards.append(Card(s,v,wild=2))
+                else:
+                    self.cards.append(Card(s,v))
+                    self.cards.append(Card(s,v))
+    
+    def shuffle(self):
+        random.shuffle(self.cards)
+        
+    def drawCard(self):
+        return self.cards.pop(0)
+
+    def addCard():
+        pass
+
+    def serveHands(self, numberofplayers=2, numberofcards=7):
+        mat = [[0 for i in range(numberofcards)] for j in range(numberofplayers)]
+        for j in range(numberofcards):
+            for i in range(numberofplayers):
+                mat[i][j] = self.drawCard()
+        
+        return mat
+
+'''
+D = Deck()
+D.initialBuild()
+print(D.cards[0].unique)
+D.shuffle()
+print(D.cards[0].unique)
+print(len(D.cards))
+hands = D.serveHands()
+print(hands[0][6].unique)
+print(len(D.cards))
+
+'''
+#bo = board(grid, [1,2])
+#bo.findAllSequences_n(3)
+
+D = Deck()
+D.initialBuild()
+D.shuffle()
+
+hands = D.serveHands()
+
+players = [Player('1', 'b'), Player('2', 'r')]
+
+for id, player in enumerate(players):
+    player.hand = hands[id]
+
+players[0].showHand()
