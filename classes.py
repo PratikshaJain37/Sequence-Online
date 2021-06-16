@@ -1,119 +1,82 @@
 # classes for pygame
 
-import pygame
 from itertools import product
-from find_sequence import grid
+from find_sequence import grid, places
 import random
 #https://pydealer.readthedocs.io/en/latest/usage.html
-
-class Button:
-    def __init__(self, text, x, y, color):
-        self.text = text
-        self.x = x
-        self.y = y
-        self.color = color
-        self.width = 150
-        self.height = 100
-
-    def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("comicsans", 40)
-        text = font.render(self.text, 1, (255,255,255))
-        win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
-
-    def click(self, pos):
-        x1 = pos[0]
-        y1 = pos[1]
-        if self.x <= x1 <= self.x + self.width and self.y <= y1 <= self.y + self.height:
-            return True
-        else:
-            return False
-
-
-
 
 # player class
 class Player():
     def __init__(self, name, color) -> None:
-        self.name = name
-        self.color = color #team
-        self.turn = False # if its their turn
-        self.hand = [] #assigned cards in hand
+        self.id = id # id of player
+        self.name = name # name of player - string
+        self.hand = [] # assigned cards in hand
+        self.color = color # assigned team
     
-    def toggleEnable(self):
-        if self.turn == False:
-            self.turn = True
-        else:
-            self.turn = False
-    
-    def drawCard(self, deck):
+    def addCard(self, deck):
         self.hand.append(deck.drawCard())
     
-    def showHand(self):
+    def removeCard(self, card_id):
+        for index, card in enumerate(self.hand):
+            if card.id == card_id:
+                self.hand.pop(index)
+
+    def validPlay(self, card_id):
         for card in self.hand:
-            print(card.id, end=' ')
-
-
-
-# players list
-class Players():
-    def __init__(self) -> None:
-        self.playerList = [] # list of <player> objects
-        self.playerOrder = []  # the order of turns
-        self.teams = {1:[], 2:[], 3:[]} # dict of ids
+            if card.id == card_id:
+                return True
+        else:
+            return False
     
-    def addPlayer(self, player, team):
-        self.playerList.append(player.name)
-        self.teams[team].append(player.name)
-
-    def removePlayer(self):
-        pass
-
-    def generateOrder(self):
-        for j in len(self.teams[1]):
-            for i in self.teams.keys():
-                try:
-                    self.playerOrder.append(self.teams[i][j])
-                except:
-                    pass
-
-    def changeTurn(self):
-        pass
+    def showHand(self):
+        hands = []
+        for card in self.hand:
+            hands.append(card.id)
+        print(hands)
+            
 
 
 
 
 # board class
-class board():
-    def __init__(self, grid, colors) -> None:
+class Board():
+    def __init__(self, grid, players=[0,1]) -> None:
         self.grid = grid
-        self.places = []
-        self.colors = colors
-        self.graphs = [graph(i) for i in colors]
-        self.sequences = {}
-    
-    def findAllSequences(self):
-        for i in self.colors:
-            self.graphs[i-1].findSequences()
-            self.sequences[i] = self.graphs[i-1].sequences
+        self.places = {}
+        self.graphs = [Graph(i) for i in players]
+        self.sequences = {i:[] for i in players}
 
-        print(self.sequences)
+        # generating places
+        for i in range(10):
+            for j in range(10):
+                suit,val = places[i][j].split('-')
+                self.places[(i,j)] = Card(suit, val)
+  
+    def validPlayOnBoard(self, x,y, card_id):
 
-    def findAllSequences_n(self, n):
-        for i in self.colors:
-            self.graphs[i-1].findSequences_n(n)
-            self.sequences[i] = self.graphs[i-1].sequences
-
-        print(self.sequences)
-
+        # validate if card.id = places.card.id
+        if self.places[(x,y)].id == card_id:
+            return True
+        else:
+            return False
 
 
+    def updateBoard(self, player, x,y):
+        self.grid[x][y] = player
+        
 
-    def updateBoard():
-        pass
+    def showBoard(self):
+        print("Grid:")
+        for row in self.grid:
+            print(row)
+        
+
+
+
+        
 
 # graph class for doing sequences
-class graph():
+class Graph():
     def __init__(self, color):
         self.gdict = {}
         self.color = color
@@ -197,32 +160,8 @@ class graph():
 
 
 
-# place class
-class Place():
-
-    def __init__(self, row, column, rank, suit) -> None:
-        self.row = row
-        self.column = column
-        self.position = (row,column)
-        self.rank = rank
-        self.suit = suit
-        self.card = (rank, suit)
-        self.color = 'white'
-        self.fixed = False
-
-    def fillPlace():
-        pass
-
-    def fixPlace():
-        pass
-
-    def validMatch():
-        pass
-
-
-
 # card class
-class Card:
+class Card():
     def __init__(self, suit, val, wild=0) -> None:
         # id is a string which is of the form "0-S-14" {0/1, suit, value}
 
@@ -251,9 +190,6 @@ class Deck():
         
     def drawCard(self):
         return self.cards.pop(0)
-
-    def addCard():
-        pass
 
     def serveHands(self, numberofplayers=2, numberofcards=7):
         mat = [[0 for i in range(numberofcards)] for j in range(numberofplayers)]
@@ -289,4 +225,3 @@ players = [Player('1', 'b'), Player('2', 'r')]
 for id, player in enumerate(players):
     player.hand = hands[id]
 
-players[0].showHand()
