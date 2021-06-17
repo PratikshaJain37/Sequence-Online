@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+
+hi {{ name }} ! <br>
+Gameid/Roomid {{ id }} <br>
+You are Player Number {{ player }} <br>
+
+GameBoard: 
+<br>
+{% for i, j in zip(places, grid): %}
+    {{ i }} <br>
+    {{ j }} <br> <br>
+{% endfor %}
+
+
+your hand: {{ hand }} <br>
+
+{% for i,j in players.items(): %}
+    Player {{i}}: {{j}}
+{% endfor %}
+<br>
+{% for i,j in moves.items(): %}
+    Move: {{j}}
+{% endfor %}
+
+
+
+
+
+
+<form method="POST">
+    <p> Next Move   <input type='text' name="move"> </p>
+    <input type="submit" value="do move">
+</form>
+
+  
+ </ul>
+{% endblock %}
