@@ -40,22 +40,16 @@ while run:
            
 
     elif status == 1:
-        print("try again")
         pass
     elif status == 2:
-        print("try again")
         pass
     elif status == 3:
-        print("try again")
         pass
     elif status == 4:
-        print("try again")
         pass
     elif status == 5:
-        print("try again")
         pass
     elif status == 6:
-        print("try again")
         pass
     
      

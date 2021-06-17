@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  
+<div class="jumbotron text-center">
+ <h1> Sequence Online! </h1>
+</div>
+
+<form method="POST">
+    <p> Room Number    <input type='text' name="room_id"> </p>
+    <p> Room Password    <input type='text' name="room_pwd"> </p>
+    <input type="submit" value="play">
+</form>
+
+
+{% endblock %}
