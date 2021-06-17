@@ -36,10 +36,12 @@ class Player():
         else:
             return False
     
-    def showHand(self):
+    def showHand(self, returnValue=False):
         hands = []
         for card in self.hand:
             hands.append(card.id)
+        if returnValue:
+            return hands
         print(hands)
             
 
