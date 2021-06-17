@@ -1,3 +1,12 @@
+'''
+Sequence Online
+game2.py - script with game class
+
+Author: Pratiksha Jain
+
+'''
+
+
 from classes import Board, Player, Deck, Card
 
 class Game():
@@ -35,17 +44,27 @@ class Game():
    
     def play(self, player, card_id, pos):
         wildcard = int(card_id.split("-")[2])
-        if player != self.turn:
-            return 4
+        if player != self.turn: # not players turns
+            return 6
         elif not (self.players[player].validPlay(card_id)):
-            print('Not present in cards')
+            print('Not present in cards') # card played is not in hand
+            return 5
+        
+        elif wildcard==1 and self.board.spaceEmpty(pos[0], pos[1]) : # one eyed joker trying to remove empty space
+            print("wildcard(1) used incorrectly: no card present there")
+            return 4
+        elif wildcard != 1 and not(self.board.spaceEmpty(pos[0], pos[1])) : # trying to place card in non empty location
+            print("space not empty - cannot place card there")
             return 3
-        elif not(self.board.spaceEmpty(player,pos[0], pos[1], wildcard)) :
-            print("Space not empty on board, or, wildcard(1) played incorrectly")
+
+        elif wildcard == 0 and not(self.board.validPlayOnBoard(pos[0], pos[1],card_id)): # trying to play card in wrong location (change location)
+            print("no wildcard, Wrong card or location entered, ")
             return 2
-        elif not(self.board.validPlayOnBoard(pos[0], pos[1],card_id)):
-            print("Wrong card or location entered, no wildcard")
+        
+        elif wildcard == 1 and self.board.places[(pos[0], pos[1])].fixed == 1: # one eyed joker trying to remove fixed card
+            print("One eyed joker trying to remove fixed card")
             return 1
+        
         else:
             self.board.updateBoard(player, pos[0], pos[1], card_id)
             self.players[player].removeCard(card_id)
@@ -58,17 +77,17 @@ class Game():
                 print("Game Over")
                 return -1
             else:
+                print("Accepted")
                 return 0 
 
 
     def updateTurn(self):
-        self.turn = (self.turn+1)%2
+        self.turn = (self.turn+1)%len((self.players))
 
     def updateSequenceFormed(self, player):
 
         self.board.graphs[player].findSequences()
         self.sequences[player] = self.board.graphs[player].sequences
-
 
         # update fixed
         for i in self.sequences[player]:

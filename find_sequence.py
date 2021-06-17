@@ -1,3 +1,11 @@
+'''
+Sequence Online
+find_sequence.py - for testing and storing
+
+Author: Pratiksha Jain
+
+'''
+
 import random
 
 # --- --------#
@@ -65,6 +73,36 @@ H-11-1 0-4
 #g_1.validateSequence()
 
 
+'''
+D = Deck()
+D.initialBuild()
+print(D.cards[0].unique)
+D.shuffle()
+print(D.cards[0].unique)
+print(len(D.cards))
+hands = D.serveHands()
+print(hands[0][6].unique)
+print(len(D.cards))
+
+
+#bo = board(grid, [1,2])
+#bo.findAllSequences_n(3)
+
+D = Deck()
+D.initialBuild()
+D.shuffle()
+
+hands = D.serveHands()
+
+players = [Player('1', 'b'), Player('2', 'r')]
+
+for id, player in enumerate(players):
+    player.hand = hands[id]
+
+bo = Board(grid, [0,1])
+bo.updateSequences(0)
+
+'''
 
 
 

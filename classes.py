@@ -1,9 +1,17 @@
+'''
+Sequence Online
+classes.py - stores all classes and uses
+
+Author: Pratiksha Jain
+
+'''
+
+
 # classes for pygame
 
 from itertools import product
-from find_sequence import grid, places
+from find_sequence import places
 import random
-#https://pydealer.readthedocs.io/en/latest/usage.html
 
 # player class
 class Player():
@@ -60,34 +68,16 @@ class Board():
 
   
     def validPlayOnBoard(self, x,y, card_id):
-        wildcard = int(card_id.split("-")[2])
-        if wildcard == 1 or wildcard == 2:
-            return True
-        elif self.places[(x,y)].card.id == card_id:
+        if self.places[(x,y)].card.id == card_id:
             return True
         else:
             return False
     
-    def spaceEmpty(self, player,x,y, wildcard):
-        
-        if wildcard != 1:
-            print(self.places[(x,y)].filled)
-            if self.places[(x,y)].filled == -1:
-                return True
-            else:
-                return False
-        else:
-            if self.places[(x,y)].filled == player:
-                return True
-            else:
-                return False
-        '''
-        if self.places[(x,y)].filled == 0:
+    def spaceEmpty(self, x,y):
+        if self.places[(x,y)].filled == -1:
                 return True
         else:
             return False
-        '''
-
 
     def updateBoard(self, player, x,y,card_id):
         wildcard = int(card_id.split("-")[2])
@@ -96,18 +86,13 @@ class Board():
             self.grid[x][y] = player
         
         elif wildcard == 1: # one eyed - removes
-            if not (self.places[(x,y)].fixed == 1):
-                self.places[(x,y)].filled = -1 
-                self.grid[x][y] = -1
-            else:
-                print("Illegal")
+            self.places[(x,y)].filled = -1 
+            self.grid[x][y] = -1
         
         elif wildcard == 2: # two-eyed - adds
-            if self.places[(x,y)].filled == -1:
-                self.places[(x,y)].filled = player 
-                self.grid[x][y] = player
-            else:
-                print("Illegal")
+            self.places[(x,y)].filled = player 
+            self.grid[x][y] = player
+
     
     def showBoard(self):
         print("Grid:")
@@ -126,7 +111,7 @@ class Place():
     
     def fixPlace(self):
         self.fixed = 1
-        
+            
 
 # graph class for doing sequences
 class Graph():
@@ -207,17 +192,13 @@ class Graph():
                     diff = id2-id1
                     self.dfs(stack, id2, diff, n)
 
-    def validateSequence(self):
-    
-        pass
-
 
 
 
 # card class
 class Card():
     def __init__(self, suit, val, wild=0) -> None:
-        # id is a string which is of the form "0-S-14" {0/1, suit, value}
+        # id is a string which is of the form "S-14-0" {suit, value, wild}
 
         self.suit = suit
         self.val = val
@@ -253,35 +234,5 @@ class Deck():
         
         return mat
 
-'''
-D = Deck()
-D.initialBuild()
-print(D.cards[0].unique)
-D.shuffle()
-print(D.cards[0].unique)
-print(len(D.cards))
-hands = D.serveHands()
-print(hands[0][6].unique)
-print(len(D.cards))
-
-
-#bo = board(grid, [1,2])
-#bo.findAllSequences_n(3)
-
-D = Deck()
-D.initialBuild()
-D.shuffle()
-
-hands = D.serveHands()
-
-players = [Player('1', 'b'), Player('2', 'r')]
-
-for id, player in enumerate(players):
-    player.hand = hands[id]
-
-bo = Board(grid, [0,1])
-bo.updateSequences(0)
-
-'''
 
 

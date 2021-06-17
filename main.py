@@ -1,5 +1,10 @@
-#https://www.techwithtim.net/tutorials/python-online-game-tutorial/client/
+'''
+Sequence Online
+main.py - main script to run and game loop
 
+Author: Pratiksha Jain
+
+'''
 # main.py
 
 from game2 import Game
@@ -17,7 +22,7 @@ game.board.showBoard()
 run = True
 move = ''
 
-x = 0
+
 while run:
     player = game.turn
     game.move = input("It is player %s turn:     "%(game.players[player].name))
@@ -31,17 +36,28 @@ while run:
     elif status == 0: # valid turn
         print (game.players[player].showHand())
         game.updateTurn()
+        game.board.showBoard()
            
 
     elif status == 1:
+        print("try again")
         pass
     elif status == 2:
+        print("try again")
         pass
     elif status == 3:
+        print("try again")
+        pass
+    elif status == 4:
+        print("try again")
+        pass
+    elif status == 5:
+        print("try again")
+        pass
+    elif status == 6:
+        print("try again")
         pass
     
-    game.board.showBoard() 
-    x += 1
+     
 
-    if x == 6:
-        break
+
