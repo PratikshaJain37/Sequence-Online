@@ -1,11 +1,13 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-  
-<div class="jumbotron text-center">
- <h1> Sequence Online! </h1>
-</div>
-Error: <br>
-{{ message }}
+
+<!-- Masthead-->
+<header class="masthead">
+    <div class="container">
+        <div class="masthead-heading text-uppercase">Error</div>
+        <div class="masthead-subheading">{{ message }}</div>
+    </div>
+</header>
 
 {% endblock %}

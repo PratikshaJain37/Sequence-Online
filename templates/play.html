@@ -1,41 +1,42 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+<section class="page-section" id="services">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Room {{ id }}</h2>
+            <h3 class="section-subheading text-muted">Room Pwd: {{ pwd }} </h3>
+        </div>
+
+        <div class="text-center">
+            <h3 class="section-subheading text-muted">Hi  {{ name }}, you are Player Number {{ player }}! </h3>
+        </div>
+        <div class="text-center">
+            <form method="POST">
+            {% set formtype = 'grid' %}
+            {% include "includes/_grid.html" %}
+
+            <br>
+            <br>
+            <br>
+            <br>
+            <br> 
+            {% set formtype = 'hand' %}
+            {% include "includes/_hand.html" %} 
+            <br>
+
+            <button type="submit" class="btn btn-primary btn-xl text-uppercase"> Play Move </button>
+            </form>
+
+            {% for (i,j),k in zip(players.items(), moves.values()): %}
+                Player {{i}}: {{j}} <br>
+                Move {{k}} <br><br>
+            {% endfor %}
+            <br>
+
+        </div>
 
 
-hi {{ name }} ! <br>
-Gameid/Roomid {{ id }} <br>
-Gameid/Roomid {{ pwd }} <br>
-You are Player Number {{ player }} <br>
-
-GameBoard: 
-<br>
-{% for i, j in zip(places, grid): %}
-    {{ i }} <br>
-    {{ j }} <br> <br>
-{% endfor %}
-
-
-your hand: {{ hand }} <br>
-
-{% for i,j in players.items(): %}
-    Player {{i}}: {{j}}
-{% endfor %}
-<br>
-{% for i,j in moves.items(): %}
-    Move: {{j}}
-{% endfor %}
-
-
-
-
-
-
-<form method="POST">
-    <p> Next Move   <input type='text' name="move"> </p>
-    <input type="submit" value="do move">
-</form>
-
-  
- </ul>
+    </div>
+</section>
 {% endblock %}

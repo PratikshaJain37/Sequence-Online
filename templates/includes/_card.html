@@ -1,0 +1,37 @@
+<!-- Card-->
+
+<div class="playingCards faceImages">
+{% if suit == '0' %}
+    <div class="card back">*</div>
+{% else %}
+    {% if suit == 'S' %}
+        {% set s = 'spades' %}
+    {% elif suit == "H" %}
+        {% set s = 'hearts' %}
+    {% elif suit == "C" %}
+        {% set s = 'clubs' %}
+    {% elif suit == "D" %}
+        {% set s = 'diams' %}
+    {% endif %}
+
+    
+    {% if val == 0 %}
+        <div class="card rank-{{rank}} {{s}}" style="background-color: rgba(0,255,0, 0.5);">
+    {% elif val == 1 %}
+        <div class="card rank-{{rank}} {{s}}" style="background-color: rgba(0,0,255, 0.5);">
+    {% elif val == 2 %}
+        <div class="card rank-{{rank}} {{s}}" style="background-color: rgba(255,0,0, 0.5);">  
+    {% else %}
+        <div class="card rank-{{rank}} {{s}}">
+    {% endif %}
+            <span class="rank">{{rank}}</span>
+            <span class="suit">&{{s}};</span>
+            {% include "includes/_radiobtn.html" %}
+        </div>
+    
+
+{% endif %}
+
+    
+</div>
+<!-- card, /static/assets/img/navbar-logo.svgplace-->

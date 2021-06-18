@@ -2,15 +2,33 @@
 
 {% block body %}
   
-<div class="jumbotron text-center">
- <h1> Sequence Online! </h1>
+<section class="page-section" id="contact">
+<div class="container">
+    <div class="text-center">
+        <h2 class="section-heading text-uppercase">Join Room</h2>
+    </div>
+    
+    <form id="contactForm" data-sb-form-api-token="API_TOKEN" method="POST">
+        <div class="row align-items-stretch mb-5">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <!-- Name input-->
+                    <input class="form-control" id="name" type="text" placeholder="Room Number *" data-sb-validations="required" name="room_id"/>
+                    <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <!-- Name input-->
+                    <input class="form-control" id="name" type="text" placeholder="Room Password *" data-sb-validations="required" name="room_pwd" />
+                    <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button-->
+        <div class="text-center"><button class="btn btn-primary btn-xl text-uppercase" id="submitButton" type="submit">Join Room</button></div>
+    </form>
 </div>
-
-<form method="POST">
-    <p> Room Number    <input type='text' name="room_id"> </p>
-    <p> Room Password    <input type='text' name="room_pwd"> </p>
-    <input type="submit" value="play">
-</form>
-
-
+</section>
 {% endblock %}

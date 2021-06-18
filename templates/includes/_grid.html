@@ -1,0 +1,19 @@
+GameBoard: 
+
+<div class="playingCards">
+    {% for i, j in zip(places, grid): %}
+        {% set x = loop.index0 %}
+
+    <ul class="table">
+        {% for card,val in zip(i,j): %}
+            <li>
+                {% set y = loop.index0 %}
+
+                {% set suit, rank = card.split("-") %}
+                {% include "includes/_card.html" %}
+            </li>
+        {% endfor %}  
+        <br>
+    </ul>
+    {% endfor %}
+</div>

@@ -1,0 +1,15 @@
+
+Your Hand:
+
+
+<div class="playingCards">
+    <ul class="table">
+        {% for card in hand: %}
+            <li>
+                {% set suit, rank, wild = card.split("-") %}
+                {% include "includes/_card.html" %}
+            </li>
+        {% endfor %}  
+        <br>
+    </ul>
+</div>

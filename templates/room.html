@@ -2,15 +2,29 @@
 
 {% block body %}
 
+<section class="page-section" id="contact">
+    <div class="container">
 
-<form method="POST">
-    <p> Name    <input type='text' name="name"> </p>
-    <input type="submit" value="start">
-</form>
+        <div class="text-center">
+            <h3 class="section-heading text-uppercase">Enter Name</h3>
+        </div>
+        
+        <form id="contactForm" data-sb-form-api-token="API_TOKEN" method="POST">
+            <div class="row align-items-stretch mb-5">
+                <div class="col-md-6 mx-auto">
+                    <div class="form-group">
+                        <!-- Name input-->
+                        <input class="form-control" id="name" type="text" placeholder="Name *" data-sb-validations="required" name="name"/>
+                        <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                    </div>
+                </div>
+
+            <!-- Submit Button-->
+            <div class="text-center"><button class="btn btn-primary btn-xl text-uppercase" id="submitButton" type="submit">Play</button></div>
+        </form>
 
 
+    </div>
+</section>
 
-
-  
- </ul>
 {% endblock %}

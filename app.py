@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 
 from game2 import Game
 from find_sequence import places
@@ -47,7 +47,17 @@ class Room():
 
 
 
-app = Flask(__name__)
+app = Flask(__name__, 
+static_url_path='',
+static_folder="static",
+template_folder="templates",
+)
+
+
+@app.route('/static/<path:path>')
+def send_js(path):
+    return send_from_directory('static', path)
+
 
 @app.route("/", methods=["GET",'POST'])
 def home():
@@ -129,8 +139,10 @@ def play(id):
     if room.active == 1:
         if request.method == "POST":
 
-            move = request.form.get('move', type=str)
-            
+            card_pos = request.form['cardpos']
+            card_id = request.form['cardid']
+
+            move = card_id+' '+card_pos
             status = room.playerMove(player, move)
     
             return render_template('play.html', id=id, player=player, name = name, move=move, status=status, grid=room.game.board.grid, places=places,hand = room.game.players[player].showHand(returnValue=True), players=room.players, moves=room.moves, pwd=room.password)
@@ -138,7 +150,8 @@ def play(id):
     return render_template('play.html', id=id, player=player, name=name, move=move, grid=room.game.board.grid, places=places, hand = room.game.players[player].showHand(returnValue=True), players=room.players, moves=room.moves, pwd=room.password)
 
 @app.route("/error")
-def error(message):
+def error():
+    message = request.args.get("message")
     return render_template('error.html', message=message)
 
 @app.route("/rules")

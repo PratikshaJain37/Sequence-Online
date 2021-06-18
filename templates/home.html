@@ -1,12 +1,18 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-  
+<!-- Masthead-->
+<header class="masthead">
+    <div class="container">
+        <div class="masthead-subheading">Welcome To Sequence Online!</div>
+        <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
+        <form method="POST">
 
-<form method="POST">
-    <button type="submit" value="create" name="btn">Create Room!</button>
-    <button type="submit" value="join" name="btn">Join Room</button>
-</form>
+            <button class="btn btn-primary btn-xl text-uppercase" type="submit" value="create" name="btn">Create Room</button>
 
+            <button class="btn btn-primary btn-xl text-uppercase" type="submit" value="join" name="btn">Join Room</button>
+        </form>
+    </div>
+</header>
 
 {% endblock %}
