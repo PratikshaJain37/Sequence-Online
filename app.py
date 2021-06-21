@@ -161,4 +161,4 @@ def rules():
 app.jinja_env.globals.update(zip=zip)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
