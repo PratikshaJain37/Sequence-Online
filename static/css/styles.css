@@ -11290,9 +11290,9 @@ section#contact form#contactForm :-ms-input-placeholder {
 
 
 .playingCards.simpleCards .card input,
-.playingCards .card.rank-j input,
-.playingCards .card.rank-q input,
-.playingCards .card.rank-k input,
+.playingCards .card.rank-11 input,
+.playingCards .card.rank-12 input,
+.playingCards .card.rank-13 input,
 .playingCards .card.rank-a input {
   margin-top: 2.4em;
 }
@@ -11455,17 +11455,20 @@ section#contact form#contactForm :-ms-input-placeholder {
 
 /*____________ symbols in the middle (faces as images) ____________*/
 
-.playingCards.faceImages .card.rank-j .suit:after,
-.playingCards.faceImages .card.rank-q .suit:after,
-.playingCards.faceImages .card.rank-k .suit:after {
+.playingCards.faceImages .card.rank-11 .suit:after,
+.playingCards.faceImages .card.rank-12 .suit:after,
+.playingCards.faceImages .card.rank-13 .suit:after {
   content: '';
 }
-.playingCards.faceImages .card.rank-j,
-.playingCards.faceImages .card.rank-q,
-.playingCards.faceImages .card.rank-k,
+.playingCards.faceImages .card.rank-11,
+.playingCards.faceImages .card.rank-12,
+.playingCards.faceImages .card.rank-13,
 .playingCards.faceImages .card.joker {
   background-repeat: no-repeat;
-  background-position: -1em 0;
+
+  background-size: 2em;
+  background-position: 0 0;
+
   /* @change: smaller cards: more negative distance from the left
      bigger cards: 0 or more positive distance from the left */
 
@@ -11480,32 +11483,32 @@ section#contact form#contactForm :-ms-input-placeholder {
   */
 }
 
-.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }
-.playingCards.faceImages .card.rank-j.hearts { background-image: url(faces/JH.gif); }
-.playingCards.faceImages .card.rank-j.spades { background-image: url(faces/JS.gif); }
-.playingCards.faceImages .card.rank-j.clubs  { background-image: url(faces/JC.gif); }
+.playingCards.faceImages .card.rank-11.diams  { background-image: url("../assets/img/faces/JD.gif"); }
+.playingCards.faceImages .card.rank-11.hearts { background-image: url("../assets/img/faces/JH.gif"); }
+.playingCards.faceImages .card.rank-11.spades { background-image: url("../assets/img/faces/JS.gif"); }
+.playingCards.faceImages .card.rank-11.clubs  { background-image: url("../assets/img/faces/JC.gif"); }
 
-.playingCards.faceImages .card.rank-q.diams  { background-image: url(/static/css/faces/QD.gif); }
-.playingCards.faceImages .card.rank-q.hearts { background-image: url(faces/QH.gif); }
-.playingCards.faceImages .card.rank-q.spades { background-image: url(faces/QS.gif); }
-.playingCards.faceImages .card.rank-q.clubs  { background-image: url(/faces/QC.gif); }
+.playingCards.faceImages .card.rank-12.diams  { background-image: url("../assets/img/faces/QD.gif"); }
+.playingCards.faceImages .card.rank-12.hearts { background-image: url("../assets/img/faces/QH.gif"); }
+.playingCards.faceImages .card.rank-12.spades { background-image: url("../assets/img/faces/QS.gif"); }
+.playingCards.faceImages .card.rank-12.clubs  { background-image: url("../assets/img/faces/QC.gif"); }
 
-.playingCards.faceImages .card.rank-k.diams  { background-image: url(/faces/KD.gif); }
-.playingCards.faceImages .card.rank-k.hearts { background-image: url(/faces/KH.gif); }
-.playingCards.faceImages .card.rank-k.spades { background-image: url(/faces/KS.gif); }
-.playingCards.faceImages .card.rank-k.clubs  { background-image: url(/faces/KC.gif); }
+.playingCards.faceImages .card.rank-13.diams  { background-image: url("../assets/img/faces/KD.gif"); }
+.playingCards.faceImages .card.rank-13.hearts { background-image: url("../assets/img/faces/KH.gif"); }
+.playingCards.faceImages .card.rank-13.spades { background-image: url("../assets/img/faces/KS.gif"); }
+.playingCards.faceImages .card.rank-13.clubs  { background-image: url("../assets/img/faces/KC.gif"); }
 
-.playingCards.faceImages .card.joker         { background-image: url(/faces/joker.gif); }
-.playingCards.simpleCards .card.rank-j,
-.playingCards.simpleCards .card.rank-q,
-.playingCards.simpleCards .card.rank-k       { background-image: none !important; }
+.playingCards.faceImages .card.joker         { background-image: url("../assets/img/faces/joker.gif"); }
+.playingCards.simpleCards .card.rank-11,
+.playingCards.simpleCards .card.rank-12,
+.playingCards.simpleCards .card.rank-13       { background-image: none !important; }
 
 /*____________ symbols in the middle (faces as dingbat symbols) ____________*/
 
 .playingCards.simpleCards .card .suit:after,
-.playingCards .card.rank-j .suit:after,
-.playingCards .card.rank-q .suit:after,
-.playingCards .card.rank-k .suit:after,
+.playingCards .card.rank-11 .suit:after,
+.playingCards .card.rank-12 .suit:after,
+.playingCards .card.rank-13 .suit:after,
 .playingCards .card.rank-a .suit:after,
 .playingCards .card.joker .rank:after {
   font-family: Georgia, serif;
@@ -11517,14 +11520,14 @@ section#contact form#contactForm :-ms-input-placeholder {
   letter-spacing: normal;
   line-height: 1;
 }
-.playingCards .card.rank-j .suit:after {
+.playingCards .card.rank-11 .suit:after {
   content: "\265F";
   right: .15em;
 }
-.playingCards .card.rank-q .suit:after {
+.playingCards .card.rank-12 .suit:after {
   content: "\265B";
 }
-.playingCards .card.rank-k .suit:after {
+.playingCards .card.rank-13 .suit:after {
   content: "\265A";
 }
 /* joker (inner symbol) */

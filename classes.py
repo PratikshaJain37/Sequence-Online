@@ -53,10 +53,6 @@ class Board():
         self.places = {}
         self.graphs = [Graph(i, grid) for i in players]
 
-        ##
-        #self.sequences = {i:[] for i in players}
-        ##
-
         # generating places
         for i in range(10):
             for j in range(10):
@@ -216,8 +212,10 @@ class Deck():
         for s in ['S',"C","D","H"]:
             for v in range(1,14):
                 if v == 11:
-                    self.cards.append(Card(s,v,wild=1))
-                    self.cards.append(Card(s,v,wild=2))
+                    if s == "C" or s == "D":
+                        self.cards.append(Card(s,v,wild=2))
+                    else:
+                        self.cards.append(Card(s,v,wild=1))
                 else:
                     self.cards.append(Card(s,v))
                     self.cards.append(Card(s,v))
