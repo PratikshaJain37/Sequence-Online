@@ -33,9 +33,13 @@
             <button type="submit" class="btn btn-primary btn-xl text-uppercase"> Play Move </button>
             </form>
 
-            {% for (i,j),k in zip(players.items(), moves.values()): %}
-                Player {{i}}: {{j}} <br>
-                Move {{k}} <br><br>
+            {% for id, dict in lastplayed.items(): %}
+                Player {{ id }} <br>
+                {% for key, val in dict.items(): %}
+                    {{ key }} : {{ val }} <br>
+                {% endfor %}
+                <br>
+                <br>
             {% endfor %}
             <br>
         </div>

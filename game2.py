@@ -10,19 +10,23 @@ Author: Pratiksha Jain
 from classes import Board, Player, Deck, Card
 
 class Game():
-    def __init__(self, id, players=['prati','anu']):
+    def __init__(self, id):
         self.id = id
-        
-        
         self.board =  Board([[4]+[-1 for i in range(8)]+[4] if j==0 or j==9 else [-1 for i in range(10)] for j in range(10)])
-        
-        self.players = [Player(players[0], 'b'), Player(players[1], 'r')]
+        self.players = []
         self.turn = 0
         self.deck = Deck()
-
-        self.sequences = {i:[] for i in range(len(players))}
-
+        self.sequences = {}
         self.move = ''
+
+    def addPlayer(self, player, name):
+        if player == 0:
+            self.players.append(Player(name, 'b'))
+        elif player == 1:
+            self.players.append(Player(name, 'r'))
+        else:
+            self.players.append(Player(name, 'g'))
+        self.sequences[player] = []
 
     def startGame(self):
         self.deck.initialBuild()

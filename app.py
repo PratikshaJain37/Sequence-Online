@@ -12,26 +12,22 @@ rooms = {}
 class Room():
     def __init__(self,id, password, maxplayers) -> None:
         self.password = password
-        self.active = 1
+        self.active = 0
         self.id = id
-        self.game = Game(id)
-        self.game.startGame()
-        self.players = {0:''}
-        self.moves = {0:''}
+        self.game = None
+        self.lastplayed = {0:{'Name':'', 'Move':'', 'Status':''}}
         self.maxplayers = maxplayers
     
     def initiatePlayer(self):
-        self.players[self.numberOfPlayers()] = ''
-        self.moves[self.numberOfPlayers()] = ''
+        self.lastplayed[self.numberOfPlayers()] = {'Name':'', 'Move':'', 'Status':''}
 
     def addPlayerName(self, player, name):
-        self.players[player] = name
+        self.lastplayed[player]['Name'] = name
 
     def numberOfPlayers(self):
-        return len(self.players)
+        return len(self.lastplayed)
     
     def playerMove(self, player, move):
-        self.moves[player] = move
 
         self.game.move = move
         card_id, pos = self.game.getMove()
@@ -39,12 +35,33 @@ class Room():
 
         if status == 0:
             self.game.updateTurn()
-            #self.game.players[player].showHand()
-            #self.game.board.showBoard()
 
+        self.lastplayed[player]['Move'] = move
+        self.lastplayed[player]['Status'] = self.statusText(status)
+        
         return status
+    
+    def statusText(self, status):
+        status_dict = {
+            -1: "Game Over!",
+            0: "Accepted",
+            1:"One eyed joker trying to remove fixed card",
+            2:"no wildcard, Wrong card or location entered",
+            3:"space not empty - cannot place card there",
+            4:"wildcard(1) used incorrectly: no card present there",
+            5:"Not present in cards",
+            6: "Not your turn yet"
+        }
+        return status_dict[status]
 
+    def activateGame(self):
 
+        self.game = Game(self.id)
+        for player, dict in self.lastplayed.items():
+            self.game.addPlayer(player, dict["Name"])
+        self.game.startGame()
+
+        self.active = 1
 
 
 
@@ -125,6 +142,7 @@ def waiting_room(id, player):
         
         name = request.form.get('name', type=str)
         if name != '':
+            rooms[id].activateGame()
             return redirect(url_for('play', id=id, player=player, name=name))
         
     return render_template('room.html', id=id, player=player, maxplayers=maxplayers)
@@ -144,10 +162,10 @@ def play(id):
 
             move = card_id+' '+card_pos
             status = room.playerMove(player, move)
+
+            # if status == -1, then game over
     
-            return render_template('play.html', id=id, player=player, name = name, move=move, status=status, grid=room.game.board.grid, places=places,hand = room.game.players[player].showHand(returnValue=True), players=room.players, moves=room.moves, pwd=room.password)
-    
-    return render_template('play.html', id=id, player=player, name=name, move=move, grid=room.game.board.grid, places=places, hand = room.game.players[player].showHand(returnValue=True), players=room.players, moves=room.moves, pwd=room.password)
+    return render_template('play.html', id=id, player=player, name=name, move=move, grid=room.game.board.grid, places=places, hand = room.game.players[player].showHand(returnValue=True), pwd=room.password, lastplayed=room.lastplayed)
 
 @app.route("/error")
 def error():
@@ -161,4 +179,4 @@ def rules():
 app.jinja_env.globals.update(zip=zip)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
