@@ -150,6 +150,7 @@ def waiting_room(id, player):
 
 @app.route("/room/<int:id>/play", methods=["POST", "GET"])
 def play(id):
+    global rooms
     # base case
     room = rooms[id]
     player = int(request.args.get("player"))
