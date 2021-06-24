@@ -137,6 +137,7 @@ def joinroom():
 
 @app.route("/room/<int:id>/<int:player>", methods=["GET","POST"])
 def waiting_room(id, player):
+    global rooms
     maxplayers = request.form.get('maxplayers')
     if request.method == "POST":
         
