@@ -1,5 +1,7 @@
 {% if formtype == 'grid' %}
-    <input type="radio" name="cardpos" value="{{x}}-{{y}}" /> 
+    <input type="radio" name="cardpos" value="{{x}}-{{y}}" id="{{x}}-{{y}}"/> 
+    <label for="{{x}}-{{y}}">
 {% else %}
-    <input type="radio" name="cardid" value="{{suit}}-{{rank}}-{{wild}}"/>
+    <input type="radio" name="cardid" value="{{suit}}-{{rank}}-{{wild}}" id="{{suit}}-{{rank}}-{{wild}}"/>
+    <label for="{{suit}}-{{rank}}-{{wild}}">
 {% endif %}

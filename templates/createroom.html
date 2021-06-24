@@ -14,15 +14,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <!-- Name input-->
-                        <input class="form-control" id="name" type="text" placeholder="Room Number *" data-sb-validations="required" name="room_id"/>
-                        <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                        <input class="form-control" id="name" type="text" placeholder="Room Number *" name="room_id" required/>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <!-- Name input-->
-                        <input class="form-control" id="name" type="text" placeholder="Room Password *" data-sb-validations="required" name="room_pwd" />
-                        <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                        <!-- PWD input-->
+                        <input class="form-control" id="name" type="text" placeholder="Room Password *" name="room_pwd" required/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <!-- Number of Players input-->
+                        <input class="form-control" id="maxplayers" type="int" placeholder="Number of Players*" name="room_maxplayers" min="2" max="3" required/>
                     </div>
                 </div>
             </div>

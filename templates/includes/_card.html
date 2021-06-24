@@ -24,10 +24,10 @@
     {% else %}
         <div class="card rank-{{rank}} {{s}}">
     {% endif %}
-            <span class="rank">{{rank}}</span>
-            <span class="suit">&{{s}};</span>
             {% include "includes/_radiobtn.html" %}
-            {{rank}}
+                <span class="rank">{{rank}}</span>
+                <span class="suit">&{{s}};</span>
+            </label>
         </div>
     
 
@@ -35,4 +35,3 @@
 
     
 </div>
-<!-- card, /static/assets/img/navbar-logo.svgplace-->

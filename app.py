@@ -6,10 +6,11 @@ from find_sequence import places
 
 #https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
 
+# dictionary of rooms (id: Room)
 rooms = {}
 
 class Room():
-    def __init__(self,id, password) -> None:
+    def __init__(self,id, password, maxplayers) -> None:
         self.password = password
         self.active = 1
         self.id = id
@@ -17,6 +18,7 @@ class Room():
         self.game.startGame()
         self.players = {0:''}
         self.moves = {0:''}
+        self.maxplayers = maxplayers
     
     def initiatePlayer(self):
         self.players[self.numberOfPlayers()] = ''
@@ -58,34 +60,37 @@ template_folder="templates",
 def send_js(path):
     return send_from_directory('static', path)
 
-
+# Home Page - Button to create room + join room
 @app.route("/", methods=["GET",'POST'])
 def home():
-    global rooms
     if request.method == 'POST':
 
         value = request.form.get('btn')
-        print(value)
         if value == 'create':
             return redirect(url_for('createroom'))
         elif value == 'join':
             return redirect(url_for('joinroom'))
     return render_template("home.html")
 
+
+# Create Room - 
 @app.route("/createroom", methods=["GET",'POST'])
 def createroom():
     global rooms
     if request.method == 'POST':
 
         room_id = request.form.get('room_id', type=int)
-
         room_pwd = request.form.get('room_pwd', type=str)
+        room_maxplayers = request.form.get('room_maxplayers', type=int)
 
         if room_id in rooms.keys():
             return redirect(url_for("error", message="Room already exists"))
-        else:
-            rooms[room_id] = Room(room_id, room_pwd)
-            return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
+        if room_id == '' or room_pwd=='' or room_maxplayers == '':
+            render_template("createroom.html")
+
+        rooms[room_id] = Room(room_id, room_pwd, room_maxplayers)
+        
+        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1, maxplayers=room_maxplayers))
 
     return render_template("createroom.html")
 
@@ -95,39 +100,34 @@ def joinroom():
     if request.method == 'POST':
 
         room_id = request.form.get('room_id', type=int)
-
         room_pwd = request.form.get('room_pwd', type=str)
 
 
-        if room_id in rooms.keys():
-            if room_pwd == rooms[room_id].password:
-                rooms[room_id].initiatePlayer()
-                
-                return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
-            
-            return redirect(url_for("error",message="Wrong Password"))
-        return redirect(url_for("error",message="Room Does Not Exist"))
+        if not room_id in rooms.keys():
+            return redirect(url_for("error",message="Room Does Not Exist"))
 
+        if room_pwd != rooms[room_id].password:
+            return redirect(url_for("error",message="Wrong Password"))
+        
+        if rooms[room_id].numberOfPlayers() == rooms[room_id].maxplayers:
+            return redirect(url_for("error",message="Room Full"))
+        
+        rooms[room_id].initiatePlayer()   
+        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1, maxplayers=rooms[room_id].maxplayers))
+        
     return render_template("joinroom.html")
 
 
 @app.route("/room/<int:id>/<int:player>", methods=["GET","POST"])
 def waiting_room(id, player):
+    maxplayers = request.form.get('maxplayers')
     if request.method == "POST":
-        try:
-            name = request.form.get('name', type=str)
-
+        
+        name = request.form.get('name', type=str)
+        if name != '':
             return redirect(url_for('play', id=id, player=player, name=name))
-        except:
-            # in case no name mentioned
-            pass
-
-    # enter names - once 2 names are there, you can go to play
-    else:
-        if player>2:
-            return redirect(url_for('error', message="Room Full"))
-        else:
-            return render_template('room.html', id=id, player=player)
+        
+    return render_template('room.html', id=id, player=player, maxplayers=maxplayers)
 
 @app.route("/room/<int:id>/play", methods=["POST", "GET"])
 def play(id):
