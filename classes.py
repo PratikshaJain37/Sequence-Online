@@ -10,7 +10,7 @@ Author: Pratiksha Jain
 # classes for pygame
 
 from itertools import product
-from find_sequence import places
+#from find_sequence import places
 import random
 
 # player class
@@ -193,6 +193,7 @@ class Graph():
                 if id2>id1:
                     diff = id2-id1
                     self.dfs(stack, id2, diff, n)
+    
 
 
 
