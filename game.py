@@ -12,16 +12,12 @@ from classes import Board, Player, Deck, Card
 class Game():
     def __init__(self, id, players=['prati','anu']):
         self.id = id
-        
-        
         self.board =  Board([[4]+[-1 for i in range(8)]+[4] if j==0 or j==9 else [-1 for i in range(10)] for j in range(10)])
-        
         self.players = [Player(players[0], 'b'), Player(players[1], 'r')]
         self.turn = 0
         self.deck = Deck()
 
         self.sequences = {i:[] for i in range(len(players))}
-
         self.move = ''
 
     def startGame(self):

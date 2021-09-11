@@ -5,14 +5,19 @@ main.py - main script to run and game loop
 Author: Pratiksha Jain
 
 '''
-# main.py
 
-from game2 import Game
+#-------------#
+# Imports 
 
-#p1 = input("Enter p1 name")
-#p2 = input("Enter p2 name")
+from game import Game
 
-game = Game(1)
+#-------------#
+
+# Initializing Game
+p1 = input("Enter player 1 name: ")
+p2 = input("Enter player 2 name: ")
+
+game = Game(1, players=[p1, p2])
 game.startGame()
 
 print (game.players[0].showHand())
@@ -22,6 +27,9 @@ game.board.showBoard()
 run = True
 move = ''
 
+#-------------#
+
+# Game Loop
 
 while run:
     player = game.turn
@@ -34,7 +42,7 @@ while run:
     if status == -1: # winner
         run = False
     elif status == 0: # valid turn
-        print (game.players[player].showHand())
+        game.players[player].showHand()
         game.updateTurn()
         game.board.showBoard()
            
@@ -58,6 +66,6 @@ while run:
         print("try again")
         pass
     
-     
+#-------------#     
 
 
