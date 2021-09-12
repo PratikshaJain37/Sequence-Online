@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 
-from game2 import Game
-from find_sequence import places
+from classes import Game, Room, places
 
 
 #https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
@@ -9,69 +8,11 @@ from find_sequence import places
 # dictionary of rooms (id: Room)
 rooms = {}
 
-class Room():
-    def __init__(self,id, password, maxplayers) -> None:
-        self.password = password
-        self.active = 0
-        self.id = id
-        self.game = None
-        self.lastplayed = {0:{'Name':'', 'Move':'', 'Status':''}}
-        self.maxplayers = maxplayers
-    
-    def initiatePlayer(self):
-        self.lastplayed[self.numberOfPlayers()] = {'Name':'', 'Move':'', 'Status':''}
-
-    def addPlayerName(self, player, name):
-        self.lastplayed[player]['Name'] = name
-
-    def numberOfPlayers(self):
-        return len(self.lastplayed)
-    
-    def playerMove(self, player, move):
-
-        self.game.move = move
-        card_id, pos = self.game.getMove()
-        status = self.game.play(player, card_id, pos)
-
-        if status == 0:
-            self.game.updateTurn()
-
-        self.lastplayed[player]['Move'] = move
-        self.lastplayed[player]['Status'] = self.statusText(status)
-        
-        return status
-    
-    def statusText(self, status):
-        status_dict = {
-            -1: "Game Over!",
-            0: "Accepted",
-            1:"One eyed joker trying to remove fixed card",
-            2:"no wildcard, Wrong card or location entered",
-            3:"space not empty - cannot place card there",
-            4:"wildcard(1) used incorrectly: no card present there",
-            5:"Not present in cards",
-            6: "Not your turn yet"
-        }
-        return status_dict[status]
-
-    def activateGame(self):
-
-        self.game = Game(self.id)
-        for player, dict in self.lastplayed.items():
-            self.game.addPlayer(player, dict["Name"])
-        self.game.startGame()
-
-        self.active = 1
-
-
-
-
 app = Flask(__name__, 
 static_url_path='',
 static_folder="static",
 template_folder="templates",
 )
-
 
 @app.route('/static/<path:path>')
 def send_js(path):
