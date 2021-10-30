@@ -177,14 +177,14 @@ class Graph():
         return neighbours
         
     def findSequences(self):
-
+        print()
         for id1 in self.gdict.keys():
             for id2 in self.gdict[id1]:
                 stack = [id1]
                 if id2>id1:
                     diff = id2-id1
                     self.dfs(stack, id2, diff,5)
-
+        
     def dfs(self, visited, node, diff, n):  #function for dfs 
         
         if node not in visited:
