@@ -1,9 +1,17 @@
+'''
+Sequence Online -- app.py: main python script for flask 
+
+Author: Pratiksha Jain
+
+'''
+
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 
-from classes import Game, Room, places
+from helpers import isRoomActive, playMove, roomDoesNotExist, isRoomFull, passwordIncorrect, addPlayerToRoom, addPlayerName
+from helpers_create import createRoom, startGame
+from data import rooms, places
 
 # dictionary of rooms (id: Room)
-rooms = {}
 
 app = Flask(__name__, 
 static_url_path='',
@@ -19,14 +27,12 @@ def send_js(path):
 @app.route("/", methods=["GET",'POST'])
 def home():
     if request.method == 'POST':
-
         value = request.form.get('btn')
         if value == 'create':
             return redirect(url_for('createroom'))
         elif value == 'join':
             return redirect(url_for('joinroom'))
     return render_template("home.html")
-
 
 # Create Room - 
 @app.route("/createroom", methods=["GET",'POST'])
@@ -37,35 +43,14 @@ def createroom():
         room_id = request.form.get('room_id', type=int)
         room_pwd = request.form.get('room_pwd', type=str)
 
-        if room_id in rooms.keys():
+        if not roomDoesNotExist(room_id):
             return redirect(url_for("error", message="Room already exists"))
-        if room_id == '' or room_pwd=='':
-            render_template("createroom.html")
 
-        rooms[room_id] = Room(room_id, room_pwd)
+        createRoom(room_id, room_pwd)
         
-        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
+        return redirect(url_for('waiting_room', id=room_id, player=0))
 
     return render_template("createroom.html")
-
-def roomDoesNotExist(room_id):
-    global rooms
-    if room_id in rooms.keys():
-        return False
-    return True
-
-def isRoomFull(room_id):
-    global rooms
-    if rooms[room_id].numberOfPlayers() == 2:
-        return True
-    return False
-
-
-def passwordIncorrect(room_id, room_pwd):
-    global rooms
-    if room_pwd != rooms[room_id].password:
-        return True
-    return False
 
 
 @app.route("/joinroom", methods=["GET",'POST'])
@@ -85,9 +70,9 @@ def joinroom():
         if isRoomFull(room_id):
             return redirect(url_for("error",message="Room Full"))
         
-        rooms[room_id].initiatePlayer()   
+        addPlayerToRoom(room_id)
         
-        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
+        return redirect(url_for('waiting_room', id=room_id, player=2))
         
     return render_template("joinroom.html")
 
@@ -98,8 +83,10 @@ def waiting_room(id, player):
     if request.method == "POST":
         
         name = request.form.get('name', type=str)
-        if name != '':
-            rooms[id].activateGame()
+        if name:
+            
+            addPlayerName(id, name, player)
+            startGame(room_id=id)
 
             return redirect(url_for('play', id=id, player=player, name=name))
         
@@ -113,18 +100,19 @@ def play(id):
     player = int(request.args.get("player"))
     name = request.args.get("name")
     move=''
-    if room.active == 1:
+
+    if isRoomActive(id):
         if request.method == "POST":
 
             card_pos = request.form['cardpos']
             card_id = request.form['cardid']
 
             move = card_id+' '+card_pos
-            status = room.playerMove(player, move)
+            playMove(id, player, move)
 
-            # if status == -1, then game over
-    
-    return render_template('play.html', id=id, player=player, name=name, move=move, grid=room.game.board.grid, places=places, hand = room.game.players[player].showHand(returnValue=True), pwd=room.password, lastplayed=room.lastplayed)
+            #if status == -1: then gameover
+
+    return render_template('play.html', id=id, player=player, name=name, move=move, grid=room.game.board.grid, places=places, hand = room.game.players[player].showHand(returnValue=True), pwd=room.password, lastplayed=room.getLastPlayed())
 
 @app.route("/error")
 def error():
@@ -138,4 +126,4 @@ def rules():
 app.jinja_env.globals.update(zip=zip)
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)

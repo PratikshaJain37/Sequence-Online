@@ -1,5 +1,5 @@
 '''
-Sequence Online -- Classes.py: Stores all Classes 
+Sequence Online -- dlasses.py: Stores all Classes 
 
 Author: Pratiksha Jain
 
@@ -10,21 +10,8 @@ Author: Pratiksha Jain
 
 from itertools import product
 import random
-
-
-places = [
-        ['0-0', 'S-2', 'S-3', 'S-4', 'S-5', 'S-6', 'S-7', 'S-8', 'S-9', '0-0'], 
-        ['C-6', 'C-5', 'C-4', 'C-3', 'C-2', 'H-1', 'H-13', 'H-12', 'H-10', 'S-10'],
-        ['C-7', 'S-1', 'D-2', 'D-3', 'D-4', 'D-5', 'D-6', 'D-7', 'H-9', 'S-12'],
-        ['C-8', 'S-13', 'C-6', 'C-5', 'C-4', 'C-3', 'C-2', 'D-8', 'H-8', 'S-13'],
-        ['C-9', 'S-12', 'C-7', 'H-6', 'H-5', 'H-4', 'H-1', 'D-9', 'H-7', 'S-1'],
-        ['C-10', 'S-10', 'C-8', 'H-7', 'H-2', 'H-3', 'H-13', 'D-10', 'H-6', 'D-2'], 
-        ['C-12', 'S-9', 'C-9', 'H-8', 'H-9', 'H-10', 'H-12', 'D-12', 'H-5', 'D-3'],
-        ['C-13', 'S-8', 'C-10', 'C-12', 'C-13', 'C-1', 'D-1', 'D-13', 'H-4', 'D-4'],
-        ['C-1', 'S-7', 'S-6', 'S-5', 'S-4', 'S-3', 'S-2', 'H-2', 'H-3', 'D-5'],
-        ['0-0', 'D-1', 'D-13', 'D-12', 'D-10', 'D-9', 'D-8', 'D-7', 'D-6', '0-0'] 
-
-        ]
+from data import places
+from helpers import parseStatus
 
 # player class
 class Player():
@@ -260,17 +247,9 @@ class Game():
         self.players = []
         self.turn = 0
         self.deck = Deck()
-        self.sequences = {}
+        self.sequences = {0:[], 1:[]}
         self.move = ''
-
-    def addPlayer(self, player, name):
-        if player == 0:
-            self.players.append(Player(name, 'b'))
-        elif player == 1:
-            self.players.append(Player(name, 'r'))
-        else:
-            self.players.append(Player(name, 'g'))
-        self.sequences[player] = []
+        self.moves = []        
 
     def startGame(self):
         self.deck.initialBuild()
@@ -281,7 +260,8 @@ class Game():
         for id, player in enumerate(self.players):
             player.hand = hands[id]
 
-    def getMove(self):
+    def getMove(self):#self.lastplayed[player]['Move'] = move
+        #self.lastplayed[player]['Status'] = self.statusText(status)
         # str -> list
         # H-1-0 9-10
         card_id, pos = self.move.split()
@@ -318,7 +298,9 @@ class Game():
             self.players[player].removeCard(card_id)
             self.players[player].addCard(self.deck)
             
+
             self.updateSequenceFormed(player)
+            self.moves.append(str(player)+'- '+self.move)
 
             # check if winner
             if self.isGameOver():
@@ -327,6 +309,19 @@ class Game():
             else:
                 print("Accepted")
                 return 0 
+
+    def playerMove(self, player, move):
+        self.move = move
+        card_id, pos = self.getMove()
+        status = self.play(player, card_id, pos)
+
+        if status == 0:
+            self.updateTurn()
+        
+        return status
+
+    def getLastMove(self):
+        return self.moves[-1]
 
 
     def updateTurn(self):
@@ -362,52 +357,31 @@ class Room():
         self.active = 0
         self.id = id
         self.game = None
-        self.lastplayed = {0:{'Name':'', 'Move':'', 'Status':''}}
-    
-    def initiatePlayer(self):
-        self.lastplayed[self.numberOfPlayers()] = {'Name':'', 'Move':'', 'Status':''}
-
-    def addPlayerName(self, player, name):
-        self.lastplayed[player]['Name'] = name
-
-    def numberOfPlayers(self):
-        return len(self.lastplayed)
-    
-    def playerMove(self, player, move):
-
-        self.game.move = move
-        card_id, pos = self.game.getMove()
-        status = self.game.play(player, card_id, pos)
-
-        if status == 0:
-            self.game.updateTurn()
-
-        self.lastplayed[player]['Move'] = move
-        self.lastplayed[player]['Status'] = self.statusText(status)
+        self.players = 1
         
-        return status
-    
-    def statusText(self, status):
-        status_dict = {
-            -1: "Game Over!",
-            0: "Accepted",
-            1:"One eyed joker trying to remove fixed card",
-            2:"no wildcard, Wrong card or location entered",
-            3:"space not empty - cannot place card there",
-            4:"wildcard(1) used incorrectly: no card present there",
-            5:"Not present in cards",
-            6: "Not your turn yet"
-        }
-        return status_dict[status]
+    def numberOfPlayers(self):
+        return self.players
+        
+    def getLastPlayed(self):
+        lastplayed = {}
+        lastplayed[0] = {'Name':self.P0_Name, 'Move':self.P0_Move, 'Status':self.P0_Status}
+        lastplayed[1] = {'Name':self.P1_Name, 'Move':self.P1_Move, 'Status':self.P1_Status}
+
+        return lastplayed
 
     def activateGame(self):
 
-        self.game = Game(self.id)
-        for player, dict in self.lastplayed.items():
-            self.game.addPlayer(player, dict["Name"])
-        self.game.startGame()
+        self.P0_Move = ''
+        self.P0_Status = ''
+
+        self.P1_Move = ''
+        self.P1_Status = ''
 
         self.active = 1
+   
+    def deactivateGame(self):
+        self.game = None
+        self.active = 0
 
 
 
