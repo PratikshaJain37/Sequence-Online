@@ -357,13 +357,12 @@ class Game():
 
 
 class Room():
-    def __init__(self,id, password, maxplayers) -> None:
+    def __init__(self,id, password) -> None:
         self.password = password
         self.active = 0
         self.id = id
         self.game = None
         self.lastplayed = {0:{'Name':'', 'Move':'', 'Status':''}}
-        self.maxplayers = maxplayers
     
     def initiatePlayer(self):
         self.lastplayed[self.numberOfPlayers()] = {'Name':'', 'Move':'', 'Status':''}

@@ -2,9 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 
 from classes import Game, Room, places
 
-
-#https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
-
 # dictionary of rooms (id: Room)
 rooms = {}
 
@@ -39,18 +36,37 @@ def createroom():
 
         room_id = request.form.get('room_id', type=int)
         room_pwd = request.form.get('room_pwd', type=str)
-        room_maxplayers = request.form.get('room_maxplayers', type=int)
 
         if room_id in rooms.keys():
             return redirect(url_for("error", message="Room already exists"))
-        if room_id == '' or room_pwd=='' or room_maxplayers == '':
+        if room_id == '' or room_pwd=='':
             render_template("createroom.html")
 
-        rooms[room_id] = Room(room_id, room_pwd, room_maxplayers)
+        rooms[room_id] = Room(room_id, room_pwd)
         
-        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1, maxplayers=room_maxplayers))
+        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
 
     return render_template("createroom.html")
+
+def roomDoesNotExist(room_id):
+    global rooms
+    if room_id in rooms.keys():
+        return False
+    return True
+
+def isRoomFull(room_id):
+    global rooms
+    if rooms[room_id].numberOfPlayers() == 2:
+        return True
+    return False
+
+
+def passwordIncorrect(room_id, room_pwd):
+    global rooms
+    if room_pwd != rooms[room_id].password:
+        return True
+    return False
+
 
 @app.route("/joinroom", methods=["GET",'POST'])
 def joinroom():
@@ -60,18 +76,18 @@ def joinroom():
         room_id = request.form.get('room_id', type=int)
         room_pwd = request.form.get('room_pwd', type=str)
 
-
-        if not room_id in rooms.keys():
+        if roomDoesNotExist(room_id):
             return redirect(url_for("error",message="Room Does Not Exist"))
 
-        if room_pwd != rooms[room_id].password:
+        if passwordIncorrect(room_id, room_pwd):
             return redirect(url_for("error",message="Wrong Password"))
         
-        if rooms[room_id].numberOfPlayers() == rooms[room_id].maxplayers:
+        if isRoomFull(room_id):
             return redirect(url_for("error",message="Room Full"))
         
         rooms[room_id].initiatePlayer()   
-        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1, maxplayers=rooms[room_id].maxplayers))
+        
+        return redirect(url_for('waiting_room', id=room_id, player=rooms[room_id].numberOfPlayers()-1))
         
     return render_template("joinroom.html")
 
@@ -79,15 +95,15 @@ def joinroom():
 @app.route("/room/<int:id>/<int:player>", methods=["GET","POST"])
 def waiting_room(id, player):
     global rooms
-    maxplayers = request.form.get('maxplayers')
     if request.method == "POST":
         
         name = request.form.get('name', type=str)
         if name != '':
             rooms[id].activateGame()
+
             return redirect(url_for('play', id=id, player=player, name=name))
         
-    return render_template('room.html', id=id, player=player, maxplayers=maxplayers)
+    return render_template('room.html', id=id, player=player)
 
 @app.route("/room/<int:id>/play", methods=["POST", "GET"])
 def play(id):
@@ -122,4 +138,4 @@ def rules():
 app.jinja_env.globals.update(zip=zip)
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=False, port=5000)
